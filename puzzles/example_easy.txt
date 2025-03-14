@@ -1,0 +1,6 @@
+easy
+5
+1,2,3,1,2
+1,2,3,1,2
+4,Battleship;3,Cruiser;2,Destroyer;1,Submarine
+0,0,S;1,1,S;2,2,S
