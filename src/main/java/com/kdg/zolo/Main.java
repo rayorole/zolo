@@ -17,7 +17,6 @@ public class Main extends Application {
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Zolo - KdG");
 
-        // Set window properties
         double screenWidth = Screen.getPrimary().getVisualBounds().getWidth() * 0.8;
         double screenHeight = Screen.getPrimary().getVisualBounds().getHeight() * 0.8;
 
@@ -27,7 +26,6 @@ public class Main extends Application {
         primaryStage.setWidth(screenWidth);
         primaryStage.setHeight(screenHeight);
 
-        // Go to home screen
         HomeView homeView = new HomeView();
         new HomePresenter(homeView, primaryStage);
 
