@@ -21,6 +21,9 @@ public class GameSetup {
         GameView view = new GameView(gridSize);
         GamePresenter presenter = new GamePresenter(model, view, primaryStage);
 
+        // Update row and column hints
+        view.updateHints(model.getRowHints(), model.getColHints());
+
         primaryStage.setScene(new Scene(view));
         primaryStage.setTitle("Zolo - Battleship Puzzle - " + difficulty.substring(0, 1).toUpperCase() + difficulty.substring(1));
     }

@@ -23,6 +23,8 @@ public class HomeView extends BorderPane {
     private Button aboutButton;
     private Button exitButton;
     private ComboBox<String> difficultyComboBox;
+    private HBox gridSizeButtons;
+    private Button[] gridSizeButtonArray;
     private MenuBar menuBar;
     private MenuItem newGameMenuItem;
     private MenuItem highScoreMenuItem;
@@ -48,6 +50,23 @@ public class HomeView extends BorderPane {
         difficultyComboBox = new ComboBox<>();
         difficultyComboBox.getItems().addAll("Easy", "Medium", "Hard");
         difficultyComboBox.setValue("Medium");
+
+        // Grid size buttons
+        gridSizeButtons = new HBox(10);
+        gridSizeButtons.setAlignment(Pos.CENTER);
+        gridSizeButtonArray = new Button[6];
+
+        gridSizeButtonArray[0] = new Button("6 x 6");
+        gridSizeButtonArray[1] = new Button("7 x 7");
+        gridSizeButtonArray[2] = new Button("8 x 8");
+        gridSizeButtonArray[3] = new Button("10 x 10");
+        gridSizeButtonArray[4] = new Button("12 x 12");
+        gridSizeButtonArray[5] = new Button("15 x 15");
+
+        for (Button button : gridSizeButtonArray) {
+            button.setStyle("-fx-background-color: #4682b4; -fx-text-fill: white; -fx-font-weight: bold;");
+            gridSizeButtons.getChildren().add(button);
+        }
 
         // Menu bar
         menuBar = new MenuBar();
@@ -93,6 +112,13 @@ public class HomeView extends BorderPane {
         difficultyLabel.setFont(Font.font("System", FontWeight.NORMAL, 14));
         difficultyBox.getChildren().addAll(difficultyLabel, difficultyComboBox);
 
+        // Grid size selection
+        VBox gridSizeBox = new VBox(10);
+        gridSizeBox.setAlignment(Pos.CENTER);
+        Label gridSizeLabel = new Label("Kies een bordgrootte:");
+        gridSizeLabel.setFont(Font.font("System", FontWeight.NORMAL, 14));
+        gridSizeBox.getChildren().addAll(gridSizeLabel, gridSizeButtons);
+
         // Style buttons
         VBox buttonBox = new VBox(15);
         buttonBox.setAlignment(Pos.CENTER);
@@ -116,7 +142,7 @@ public class HomeView extends BorderPane {
                 exitButton
         );
 
-        centerBox.getChildren().addAll(titleLabel, subtitleLabel, difficultyBox, buttonBox);
+        centerBox.getChildren().addAll(titleLabel, subtitleLabel, difficultyBox, gridSizeBox, buttonBox);
         this.setCenter(centerBox);
     }
 
@@ -185,5 +211,10 @@ public class HomeView extends BorderPane {
 
     public MenuItem getExitMenuItem() {
         return exitMenuItem;
+    }
+
+    // Getters for grid size buttons
+    public Button[] getGridSizeButtons() {
+        return gridSizeButtonArray;
     }
 }

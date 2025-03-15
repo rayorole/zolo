@@ -27,7 +27,7 @@ public class Main extends Application {
         primaryStage.setWidth(screenWidth);
         primaryStage.setHeight(screenHeight);
 
-        // Go to home screen
+        // Go home screen
         HomeView homeView = new HomeView();
         new HomePresenter(homeView, primaryStage);
 

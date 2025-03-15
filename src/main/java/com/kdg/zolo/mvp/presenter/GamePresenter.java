@@ -17,6 +17,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import javafx.scene.control.Button;
 
 public class GamePresenter {
 
@@ -45,6 +46,7 @@ public class GamePresenter {
         updateViewGrid();
         initializeShipDragHandlers();
         initializeGameTimer();
+        initializeCellClickHandlers();
 
         // Add event handlers
         view.setOnUndoClicked(e -> handleUndo());
@@ -52,6 +54,7 @@ public class GamePresenter {
         view.setOnRotateClicked(e -> handleRotate());
         view.getHelpButton().setOnAction(e -> goToHelp());
         view.getNewPuzzleButton().setOnAction(e -> handleNewPuzzle());
+        view.setOnShowMistakesClicked(e -> showMistakes());
     }
 
     private void initializeGameTimer() {
@@ -190,5 +193,40 @@ public class GamePresenter {
     private String formatTime(long millis) {
         long seconds = millis / 1000;
         return String.format("%02d:%02d", seconds / 60, seconds % 60);
+    }
+
+    private void initializeCellClickHandlers() {
+        Button[][] gridButtons = view.getGridButtons();
+        for (int row = 0; row < gridButtons.length; row++) {
+            for (int col = 0; col < gridButtons[row].length; col++) {
+                final int finalRow = row;
+                final int finalCol = col;
+                gridButtons[row][col].setOnAction(e -> handleCellClick(finalRow, finalCol));
+            }
+        }
+    }
+
+    private void handleCellClick(int row, int col) {
+        // Toggle cell state: empty -> ship -> water -> empty
+        char currentCell = model.getGrid()[row][col];
+
+        if (currentCell == ' ') {
+            // Place ship
+            model.setCellValue(row, col, 'S');
+        } else if (currentCell == 'S') {
+            // Place water
+            model.setCellValue(row, col, 'W');
+        } else {
+            // Clear cell
+            model.setCellValue(row, col, ' ');
+        }
+
+        updateViewGrid();
+        checkGameCompletion();
+    }
+
+    private void showMistakes() {
+        model.validateAndMarkMistakes();
+        updateViewGrid();
     }
 }

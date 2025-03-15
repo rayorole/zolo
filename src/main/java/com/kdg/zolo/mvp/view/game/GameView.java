@@ -30,6 +30,7 @@ public class GameView extends BorderPane {
     private Button helpButton;
     private Button undoButton;
     private Button rotateButton;
+    private Button showMistakesButton;
     private Button[][] gridButtons;
     private Label[] columnHints;
     private Label[] rowHints;
@@ -54,6 +55,7 @@ public class GameView extends BorderPane {
         helpButton = new Button("Help?");
         undoButton = new Button("Ongedaan maken");
         rotateButton = new Button("Draaien");
+        showMistakesButton = new Button("Show Mistakes");
 
         solvedLabel = new Label("Opgelost!");
         solvedLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: green;");
@@ -132,7 +134,7 @@ public class GameView extends BorderPane {
         HBox bottomBar = new HBox(10);
         bottomBar.setAlignment(Pos.CENTER);
         bottomBar.setPadding(new Insets(10));
-        bottomBar.getChildren().addAll(newPuzzleButton, resetButton, undoButton, scoreLabel);
+        bottomBar.getChildren().addAll(newPuzzleButton, resetButton, undoButton, showMistakesButton, scoreLabel);
         this.setBottom(bottomBar);
     }
 
@@ -146,6 +148,7 @@ public class GameView extends BorderPane {
         helpButton.setStyle(buttonStyle);
         undoButton.setStyle(buttonStyle);
         rotateButton.setStyle(buttonStyle);
+        showMistakesButton.setStyle(buttonStyle);
 
         timerLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
         scoreLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
@@ -158,12 +161,33 @@ public class GameView extends BorderPane {
 
     public void toggleCell(int row, int col) {
         String currentText = gridButtons[row][col].getText();
-        if (currentText.equals(" ")) {
-            gridButtons[row][col].setText("🚢");
-        } else if (currentText.equals("🚢")) {
-            gridButtons[row][col].setText("🌊");
+        String currentStyle = gridButtons[row][col].getStyle();
+
+        if (currentStyle.contains("#E0E0E0")) {
+            // Empty to Ship
+            gridButtons[row][col].setText("");
+            gridButtons[row][col].setStyle(
+                    "-fx-background-color: #87CEFA; "
+                    + "-fx-border-color: black; "
+                    + "-fx-background-radius: 15; "
+                    + "-fx-border-radius: 15;"
+            );
+        } else if (currentStyle.contains("#87CEFA")) {
+            // Ship to Water
+            gridButtons[row][col].setText("");
+            gridButtons[row][col].setStyle(
+                    "-fx-background-color: #1E90FF; "
+                    + "-fx-border-color: black; "
+                    + "-fx-background-radius: 15; "
+                    + "-fx-border-radius: 15;"
+            );
         } else {
-            gridButtons[row][col].setText(" ");
+            // Water to Empty
+            gridButtons[row][col].setText("");
+            gridButtons[row][col].setStyle(
+                    "-fx-background-color: #E0E0E0; "
+                    + "-fx-border-color: black;"
+            );
         }
     }
 
@@ -171,14 +195,36 @@ public class GameView extends BorderPane {
         for (int row = 0; row < gridSize; row++) {
             for (int col = 0; col < gridSize; col++) {
                 if (grid[row][col] == 'S') {
-                    gridButtons[row][col].setText("🚢");
-                    gridButtons[row][col].setStyle("-fx-background-color: #87CEFA; -fx-border-color: black;");
+                    gridButtons[row][col].setText("");
+                    gridButtons[row][col].setStyle(
+                            "-fx-background-color: #87CEFA; "
+                            + "-fx-border-color: black; "
+                            + "-fx-background-radius: 15; "
+                            + "-fx-border-radius: 15;"
+                    );
                 } else if (grid[row][col] == 'W') {
-                    gridButtons[row][col].setText("🌊");
-                    gridButtons[row][col].setStyle("-fx-background-color: #1E90FF; -fx-border-color: black;");
+                    gridButtons[row][col].setText("");
+                    gridButtons[row][col].setStyle(
+                            "-fx-background-color: #1E90FF; "
+                            + "-fx-border-color: black; "
+                            + "-fx-background-radius: 15; "
+                            + "-fx-border-radius: 15;"
+                    );
+                } else if (grid[row][col] == 'X') {
+                    // Show mistake
+                    gridButtons[row][col].setText("");
+                    gridButtons[row][col].setStyle(
+                            "-fx-background-color: #FF6347; "
+                            + "-fx-border-color: black; "
+                            + "-fx-background-radius: 15; "
+                            + "-fx-border-radius: 15;"
+                    );
                 } else {
-                    gridButtons[row][col].setText(" ");
-                    gridButtons[row][col].setStyle("-fx-background-color: white; -fx-border-color: black;");
+                    gridButtons[row][col].setText("");
+                    gridButtons[row][col].setStyle(
+                            "-fx-background-color: #E0E0E0; "
+                            + "-fx-border-color: black;"
+                    );
                 }
             }
         }
@@ -293,6 +339,22 @@ public class GameView extends BorderPane {
 
     public void setOnRotateClicked(EventHandler<ActionEvent> handler) {
         rotateButton.setOnAction(handler);
+    }
+
+    public void setOnShowMistakesClicked(EventHandler<ActionEvent> handler) {
+        showMistakesButton.setOnAction(handler);
+    }
+
+    public void updateHints(int[] rowHints, int[] colHints) {
+        // Update row hints
+        for (int i = 0; i < rowHints.length && i < this.rowHints.length; i++) {
+            this.rowHints[i].setText(String.valueOf(rowHints[i]));
+        }
+
+        // Update column hints
+        for (int i = 0; i < colHints.length && i < this.columnHints.length; i++) {
+            this.columnHints[i].setText(String.valueOf(colHints[i]));
+        }
     }
 
     // Original getters

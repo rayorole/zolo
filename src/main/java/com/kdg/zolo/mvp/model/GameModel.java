@@ -195,4 +195,81 @@ public class GameModel {
 
         return true;
     }
+
+    public int[] getRowHints() {
+        return rowHints;
+    }
+
+    public int[] getColHints() {
+        return colHints;
+    }
+
+    public void setCellValue(int row, int col, char value) {
+        if (row >= 0 && row < gridSize && col >= 0 && col < gridSize) {
+            // Check if this is a fixed cell from the initial grid
+            if (initialGrid[row][col] != ' ') {
+                return; // Cannot modify fixed cells
+            }
+
+            grid[row][col] = value;
+
+            // Record the move for undo functionality
+            if (value == 'S') {
+                // For simplicity, we'll create a dummy ship for the move
+                Ship dummyShip = new Ship(1, "Cell");
+                moves.push(new Move(row, col, dummyShip, true));
+            }
+        }
+    }
+
+    public void validateAndMarkMistakes() {
+        // First, make a copy of the current grid
+        char[][] tempGrid = new char[gridSize][gridSize];
+        for (int i = 0; i < gridSize; i++) {
+            System.arraycopy(grid[i], 0, tempGrid[i], 0, gridSize);
+        }
+
+        // Check row hints
+        for (int row = 0; row < gridSize; row++) {
+            int shipCount = 0;
+            for (int col = 0; col < gridSize; col++) {
+                if (grid[row][col] == 'S') {
+                    shipCount++;
+                }
+            }
+
+            // If the count doesn't match the hint, mark all ships in this row as mistakes
+            if (shipCount != rowHints[row]) {
+                for (int col = 0; col < gridSize; col++) {
+                    if (grid[row][col] == 'S') {
+                        tempGrid[row][col] = 'X'; // Mark as mistake
+                    }
+                }
+            }
+        }
+
+        // Check column hints
+        for (int col = 0; col < gridSize; col++) {
+            int shipCount = 0;
+            for (int row = 0; row < gridSize; row++) {
+                if (grid[row][col] == 'S') {
+                    shipCount++;
+                }
+            }
+
+            // If the count doesn't match the hint, mark all ships in this column as mistakes
+            if (shipCount != colHints[col]) {
+                for (int row = 0; row < gridSize; row++) {
+                    if (grid[row][col] == 'S') {
+                        tempGrid[row][col] = 'X'; // Mark as mistake
+                    }
+                }
+            }
+        }
+
+        // Update the grid with the mistakes
+        for (int i = 0; i < gridSize; i++) {
+            System.arraycopy(tempGrid[i], 0, grid[i], 0, gridSize);
+        }
+    }
 }
